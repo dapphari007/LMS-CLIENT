@@ -258,7 +258,7 @@ export default function WorkflowLevelsConfig({ isTabContent = false }: WorkflowL
                     {level.approverType === "departmentHead" && "Department Head"}
                   </td>
                   <td className="py-3 px-4">
-                    {level.fallbackRoles.map((role) => (
+                    {level.fallbackRoles.map((role: UserRole) => (
                       <span key={role} className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
                         {role === UserRole.TEAM_LEAD && "Team Lead"}
                         {role === UserRole.MANAGER && "Manager"}
