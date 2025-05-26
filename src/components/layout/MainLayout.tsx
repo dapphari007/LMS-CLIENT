@@ -233,7 +233,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                       </Link>
                     ))}
 
-                  {(user?.role === "team_lead" || user?.dashboardType === "team_lead") &&
+                  {(user?.role === "team_lead" || user?.dashboardType === "team_lead" as DashboardType) &&
                     teamLeadNavigation.map((item) => (
                       <Link
                         key={item.name}
@@ -398,7 +398,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                 </>
               )}
 
-              {(user?.role === "team_lead" || user?.dashboardType === "team_lead") && (
+              {(user?.role === "team_lead" || user?.dashboardType === "team_lead" as DashboardType) && (
                 <>
                   <div className="mt-8 mb-2 px-3">
                     <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">

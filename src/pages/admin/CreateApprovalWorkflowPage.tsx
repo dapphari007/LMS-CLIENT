@@ -394,7 +394,7 @@ export default function CreateApprovalWorkflowPage() {
               The system has the following predefined workflow levels that will be used as defaults when adding steps:
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mt-3">
-              {workflowLevels.map((level) => (
+              {workflowLevels.map((level: any) => (
                 <div key={level.level} className="bg-white p-3 rounded border border-blue-100 shadow-sm">
                   <div className="font-medium text-blue-800">Level {level.level}: {level.name}</div>
                   <div className="text-sm text-gray-600 mt-1">{level.description}</div>

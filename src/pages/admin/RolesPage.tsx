@@ -87,7 +87,7 @@ const RolesPage: React.FC = () => {
     if (user?.role === "super_admin") {
       if (window.confirm("Are you sure you want to delete this role? If users are assigned to this role, they will be reassigned to the default Employee role.")) {
         try {
-          const response = await axios.delete(`${config.apiUrl}/roles/${id}`, {
+          await axios.delete(`${config.apiUrl}/roles/${id}`, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
@@ -105,7 +105,7 @@ const RolesPage: React.FC = () => {
       // For non-super_admin users, show the regular confirmation
       if (window.confirm("Are you sure you want to delete this role?")) {
         try {
-          const response = await axios.delete(`${config.apiUrl}/roles/${id}`, {
+          await axios.delete(`${config.apiUrl}/roles/${id}`, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
