@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { DashboardType } from "../../types";
 import {
   Bars3Icon,
   XMarkIcon,

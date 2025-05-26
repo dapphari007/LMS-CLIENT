@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   getTeamLeaveRequests,
 } from "../../services/leaveRequestService";
-import { LeaveRequest } from "../../types";
+import { LeaveRequest, DashboardType } from "../../types";
 import Card from "../../components/ui/Card";
 import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";

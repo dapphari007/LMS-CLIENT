@@ -127,7 +127,7 @@ export default function WorkflowLevelsConfig({ isTabContent = false }: WorkflowL
     const approverType = formData.get("approverType") as string;
     const fallbackRoles = Array.from(
       formData.getAll("fallbackRoles")
-    ) as UserRole[];
+    ) as string[];
     const isActive = formData.get("isActive") === "on";
 
     if (editingLevel) {
