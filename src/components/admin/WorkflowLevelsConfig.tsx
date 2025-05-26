@@ -125,9 +125,19 @@ export default function WorkflowLevelsConfig({ isTabContent = false }: WorkflowL
     
     const level = Number(formData.get("level"));
     const approverType = formData.get("approverType") as string;
+    // Convert string values to UserRole enum values
     const fallbackRoles = Array.from(
       formData.getAll("fallbackRoles")
-    ) as string[];
+    ).map(role => {
+      switch(role) {
+        case "team_lead": return UserRole.TEAM_LEAD;
+        case "manager": return UserRole.MANAGER;
+        case "hr": return UserRole.HR;
+        case "super_admin": return UserRole.SUPER_ADMIN;
+        case "employee": return UserRole.EMPLOYEE;
+        default: return UserRole.EMPLOYEE;
+      }
+    });
     const isActive = formData.get("isActive") === "on";
 
     if (editingLevel) {
@@ -248,13 +258,13 @@ export default function WorkflowLevelsConfig({ isTabContent = false }: WorkflowL
                     {level.approverType === "departmentHead" && "Department Head"}
                   </td>
                   <td className="py-3 px-4">
-                    {level.fallbackRoles.map((role: string) => (
+                    {level.fallbackRoles.map((role) => (
                       <span key={role} className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-                        {role === "team_lead" && "Team Lead"}
-                        {role === "manager" && "Manager"}
-                        {role === "hr" && "HR"}
-                        {role === "super_admin" && "Super Admin"}
-                        {role === "employee" && "Employee"}
+                        {role === UserRole.TEAM_LEAD && "Team Lead"}
+                        {role === UserRole.MANAGER && "Manager"}
+                        {role === UserRole.HR && "HR"}
+                        {role === UserRole.SUPER_ADMIN && "Super Admin"}
+                        {role === UserRole.EMPLOYEE && "Employee"}
                       </span>
                     ))}
                   </td>
@@ -342,7 +352,7 @@ export default function WorkflowLevelsConfig({ isTabContent = false }: WorkflowL
                       type="checkbox"
                       name="fallbackRoles"
                       value="team_lead"
-                      defaultChecked={editingLevel?.fallbackRoles.includes("team_lead")}
+                      defaultChecked={editingLevel?.fallbackRoles.includes(UserRole.TEAM_LEAD)}
                       className="mr-2"
                     />
                     Team Lead
@@ -352,7 +362,7 @@ export default function WorkflowLevelsConfig({ isTabContent = false }: WorkflowL
                       type="checkbox"
                       name="fallbackRoles"
                       value="manager"
-                      defaultChecked={editingLevel?.fallbackRoles.includes("manager")}
+                      defaultChecked={editingLevel?.fallbackRoles.includes(UserRole.MANAGER)}
                       className="mr-2"
                     />
                     Manager
