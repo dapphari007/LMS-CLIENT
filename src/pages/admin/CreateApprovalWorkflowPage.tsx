@@ -250,7 +250,7 @@ export default function CreateApprovalWorkflowPage() {
     
     // Get the next workflow level based on current steps
     const nextLevel = fields.length + 1;
-    const matchingLevel = workflowLevels.find(level => level.level === nextLevel);
+    const matchingLevel = workflowLevels.find((level: any) => level.level === nextLevel);
     
     // Use the matching level's approver type if available, otherwise use the first approver type or default to "team_lead"
     const defaultApproverType = matchingLevel?.approverType || 

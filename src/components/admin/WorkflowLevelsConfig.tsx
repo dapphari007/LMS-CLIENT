@@ -248,13 +248,13 @@ export default function WorkflowLevelsConfig({ isTabContent = false }: WorkflowL
                     {level.approverType === "departmentHead" && "Department Head"}
                   </td>
                   <td className="py-3 px-4">
-                    {level.fallbackRoles.map((role: UserRole, index: number) => (
-                      <span key={index} className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-                        {role === UserRole.TEAM_LEAD && "Team Lead"}
-                        {role === UserRole.MANAGER && "Manager"}
-                        {role === UserRole.HR && "HR"}
-                        {role === UserRole.SUPER_ADMIN && "Super Admin"}
-                        {role === UserRole.EMPLOYEE && "Employee"}
+                    {level.fallbackRoles.map((role: string) => (
+                      <span key={role} className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
+                        {role === "team_lead" && "Team Lead"}
+                        {role === "manager" && "Manager"}
+                        {role === "hr" && "HR"}
+                        {role === "super_admin" && "Super Admin"}
+                        {role === "employee" && "Employee"}
                       </span>
                     ))}
                   </td>
@@ -341,8 +341,8 @@ export default function WorkflowLevelsConfig({ isTabContent = false }: WorkflowL
                     <input
                       type="checkbox"
                       name="fallbackRoles"
-                      value={UserRole.TEAM_LEAD}
-                      defaultChecked={editingLevel?.fallbackRoles.includes(UserRole.TEAM_LEAD)}
+                      value="team_lead"
+                      defaultChecked={editingLevel?.fallbackRoles.includes("team_lead")}
                       className="mr-2"
                     />
                     Team Lead
@@ -351,8 +351,8 @@ export default function WorkflowLevelsConfig({ isTabContent = false }: WorkflowL
                     <input
                       type="checkbox"
                       name="fallbackRoles"
-                      value={UserRole.MANAGER}
-                      defaultChecked={editingLevel?.fallbackRoles.includes(UserRole.MANAGER)}
+                      value="manager"
+                      defaultChecked={editingLevel?.fallbackRoles.includes("manager")}
                       className="mr-2"
                     />
                     Manager

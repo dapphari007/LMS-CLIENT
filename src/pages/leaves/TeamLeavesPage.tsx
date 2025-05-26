@@ -52,7 +52,8 @@ const TeamLeavesPage: React.FC = () => {
   
   // Check if the current user can approve a specific leave request using the shared utility
   const canApproveRequest = (request: LeaveRequest) => {
-    const requestUserRole = request.user?.role;
+    // Get user role from the user object if available
+    const requestUserRole = request.user && 'role' in request.user ? (request.user as any).role : undefined;
     return canApproveRequestUtil(userRole, hasCustomAdminRole, request.status, request.metadata, requestUserRole);
   };
 
@@ -64,7 +65,7 @@ const TeamLeavesPage: React.FC = () => {
     user?.role === "super_admin" || 
     user?.role === "admin" ||
     user?.dashboardType === "manager" ||
-    user?.dashboardType === "team_lead" ||
+    user?.dashboardType === "team_lead" as DashboardType ||
     user?.dashboardType === "hr" ||
     user?.roleObj?.permissions?.includes('view_team_leaves');
 
@@ -243,8 +244,8 @@ const TeamLeavesPage: React.FC = () => {
         </div>
       ) : (
         <div className="space-y-6">
-          {data?.leaveRequests && data.leaveRequests.length > 0 ? (
-            data.leaveRequests.map((request: LeaveRequest) => (
+          {(data as any)?.leaveRequests && (data as any).leaveRequests.length > 0 ? (
+            (data as any).leaveRequests.map((request: LeaveRequest) => (
               <Card 
                 key={request.id} 
                 className={request.status === "partially_approved" ? "border-l-4 border-l-blue-500" : ""}
