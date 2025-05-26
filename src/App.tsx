@@ -8,6 +8,9 @@ import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import ErrorBoundary from "./components/ErrorBoundary";
 
+// Landing Page
+import LandingPage from "./pages/LandingPage";
+
 // Auth Pages
 import LoginPage from "./pages/auth/LoginPage";
 
@@ -69,6 +72,10 @@ const queryClient = new QueryClient({
 const router = createBrowserRouter([
   // Public Routes
   {
+    path: "/",
+    element: <LandingPage />,
+  },
+  {
     path: "/login",
     element: <LoginPage />,
   },
@@ -78,7 +85,7 @@ const router = createBrowserRouter([
     element: <ProtectedRoute allowedRoles={["employee", "manager", "admin", "team_lead", "hr"]} />,
     children: [
       {
-        path: "/",
+        path: "/dashboard",
         element: <DashboardPage />,
       },
 

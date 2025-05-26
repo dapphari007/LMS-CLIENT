@@ -52,7 +52,8 @@ const TeamLeavesPage: React.FC = () => {
   
   // Check if the current user can approve a specific leave request using the shared utility
   const canApproveRequest = (request: LeaveRequest) => {
-    return canApproveRequestUtil(userRole, hasCustomAdminRole, request.status, request.metadata);
+    const requestUserRole = request.user?.role;
+    return canApproveRequestUtil(userRole, hasCustomAdminRole, request.status, request.metadata, requestUserRole);
   };
 
   // Check if user has permission to view team leaves

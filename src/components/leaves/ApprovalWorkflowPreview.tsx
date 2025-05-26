@@ -5,6 +5,7 @@ import { getUserById } from '../../services/userService';
 import { getApprovalWorkflowForDuration } from '../../services/approvalWorkflowService';
 import { getUserApprovers } from '../../services/userService';
 import Card from '../ui/Card';
+import { useAuth } from '../../context/AuthContext';
 
 // Mock data for development/preview until API endpoints are ready
 const MOCK_WORKFLOW: ApprovalWorkflow = {
@@ -72,6 +73,11 @@ const ApprovalWorkflowPreview: React.FC<ApprovalWorkflowPreviewProps> = ({
   isLoading 
 }) => {
   const [approvers, setApprovers] = useState<Approver[]>([]);
+  const { user } = useAuth(); // Get the current user
+  const userRole = user?.role || '';
+  const isTeamLead = userRole === 'team_lead';
+  const isManager = userRole === 'manager';
+  const isHR = userRole === 'hr';
   
   // Fetch the approval workflow based on the duration
   const { 
@@ -95,7 +101,7 @@ const ApprovalWorkflowPreview: React.FC<ApprovalWorkflowPreviewProps> = ({
     isLoading: isLoadingApprovers,
     error: approversError
   } = useQuery({
-    queryKey: ['userApprovers', workflowData?.id],
+    queryKey: ['userApprovers', workflowData?.id, userRole],
     queryFn: () => getUserApprovers()
       .catch(error => {
         console.error('Error fetching approvers:', error);
@@ -118,17 +124,69 @@ const ApprovalWorkflowPreview: React.FC<ApprovalWorkflowPreviewProps> = ({
         // Sort by level
         mappedApprovers.sort((a: Approver, b: Approver) => a.level - b.level);
         
-        setApprovers(mappedApprovers);
+        // For Team Leads, Managers, and HR, we need to adjust the display to show the correct approval path
+        if (isTeamLead) {
+          console.log('User is a Team Lead, adjusting approval path display');
+          // Filter out any Team Lead approvers (they shouldn't approve their own requests)
+          const filteredApprovers = mappedApprovers.filter(
+            approver => approver.role !== 'team_lead'
+          );
+          setApprovers(filteredApprovers);
+        } else if (isManager) {
+          console.log('User is a Manager, adjusting approval path display');
+          // Filter out any Manager approvers (they shouldn't approve their own requests)
+          const filteredApprovers = mappedApprovers.filter(
+            approver => approver.role !== 'manager'
+          );
+          setApprovers(filteredApprovers);
+        } else if (isHR) {
+          console.log('User is HR, adjusting approval path display');
+          // Filter out any HR approvers (they shouldn't approve their own requests)
+          const filteredApprovers = mappedApprovers.filter(
+            approver => approver.role !== 'hr'
+          );
+          setApprovers(filteredApprovers);
+        } else {
+          setApprovers(mappedApprovers);
+        }
       } catch (error) {
         console.error('Error processing approvers data:', error);
         // Use mock data as fallback
-        setApprovers(MOCK_APPROVERS);
+        if (isTeamLead) {
+          // For Team Leads, filter out Team Lead approvers from mock data
+          const filteredMockApprovers = MOCK_APPROVERS.filter(
+            approver => approver.role !== 'team_lead'
+          );
+          setApprovers(filteredMockApprovers);
+        } else {
+          setApprovers(MOCK_APPROVERS);
+        }
       }
     } else if (workflowData && !approversData) {
       // If we have workflow but no approvers, use mock approvers
-      setApprovers(MOCK_APPROVERS);
+      if (isTeamLead) {
+        // For Team Leads, filter out Team Lead approvers from mock data
+        const filteredMockApprovers = MOCK_APPROVERS.filter(
+          approver => approver.role !== 'team_lead'
+        );
+        setApprovers(filteredMockApprovers);
+      } else if (isManager) {
+        // For Managers, filter out Manager approvers from mock data
+        const filteredMockApprovers = MOCK_APPROVERS.filter(
+          approver => approver.role !== 'manager'
+        );
+        setApprovers(filteredMockApprovers);
+      } else if (isHR) {
+        // For HR, filter out HR approvers from mock data
+        const filteredMockApprovers = MOCK_APPROVERS.filter(
+          approver => approver.role !== 'hr'
+        );
+        setApprovers(filteredMockApprovers);
+      } else {
+        setApprovers(MOCK_APPROVERS);
+      }
     }
-  }, [approversData, workflowData]);
+  }, [approversData, workflowData, isTeamLead]);
   
   if (isLoading || isLoadingWorkflow || isLoadingApprovers) {
     return (
@@ -220,44 +278,77 @@ const ApprovalWorkflowPreview: React.FC<ApprovalWorkflowPreviewProps> = ({
       
       <div className="space-y-3">
         {workflowToUse.approvalLevels && workflowToUse.approvalLevels.length > 0 ? (
-          workflowToUse.approvalLevels.map((level, index) => {
-            // Find approvers for this level
-            const levelApprovers = approvers.filter(a => a.level === level.level);
-            
-            return (
-              <div key={`level-${level.level}`} className="flex items-start">
+          // If user is a Team Lead, Manager, or HR, we need to adjust the display
+          (isTeamLead || isManager || isHR) ? (
+            // For Team Leads, Managers, and HR, show their approvers with adjusted levels
+            approvers.map((approver, index) => (
+              <div key={`level-${index+1}`} className="flex items-start">
                 <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 mr-3">
-                  <span className="text-xs font-medium">{level.level}</span>
+                  <span className="text-xs font-medium">{index+1}</span>
                 </div>
                 <div className="flex-1">
                   <p className="font-medium text-sm">
-                    Level {level.level}: {level.approverType ? level.approverType.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()) : 'Approver'}
+                    Level {index+1}: {approver.role === 'manager' ? 'Manager' : 
+                                     approver.role === 'hr' ? 'HR' : 
+                                     approver.role === 'super_admin' ? 'Super Admin' : 'Approver'}
                   </p>
                   
-                  {levelApprovers.length > 0 ? (
-                    <div className="mt-1">
-                      {levelApprovers.map((approver, i) => (
-                        <div key={`approver-${approver.id}`} className="text-sm text-gray-700 flex items-center">
-                          <span className={approver.isFallback ? 'text-orange-600' : ''}>
-                            {approver.firstName} {approver.lastName}
-                          </span>
-                          {approver.isFallback && (
-                            <span className="ml-2 text-xs bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded">
-                              Fallback
-                            </span>
-                          )}
-                        </div>
-                      ))}
+                  <div className="mt-1">
+                    <div className="text-sm text-gray-700 flex items-center">
+                      <span className={approver.isFallback ? 'text-orange-600' : ''}>
+                        {approver.firstName} {approver.lastName}
+                      </span>
+                      {approver.isFallback && (
+                        <span className="ml-2 text-xs bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded">
+                          Fallback
+                        </span>
+                      )}
                     </div>
-                  ) : (
-                    <p className="text-sm text-gray-500 italic">
-                      Approver will be assigned based on your department and role hierarchy
-                    </p>
-                  )}
+                  </div>
                 </div>
               </div>
-            );
-          })
+            ))
+          ) : (
+            // For regular employees, show the standard workflow
+            workflowToUse.approvalLevels.map((level, index) => {
+              // Find approvers for this level
+              const levelApprovers = approvers.filter(a => a.level === level.level);
+              
+              return (
+                <div key={`level-${level.level}`} className="flex items-start">
+                  <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 mr-3">
+                    <span className="text-xs font-medium">{level.level}</span>
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-sm">
+                      Level {level.level}: {level.approverType ? level.approverType.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()) : 'Approver'}
+                    </p>
+                    
+                    {levelApprovers.length > 0 ? (
+                      <div className="mt-1">
+                        {levelApprovers.map((approver, i) => (
+                          <div key={`approver-${approver.id}`} className="text-sm text-gray-700 flex items-center">
+                            <span className={approver.isFallback ? 'text-orange-600' : ''}>
+                              {approver.firstName} {approver.lastName}
+                            </span>
+                            {approver.isFallback && (
+                              <span className="ml-2 text-xs bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded">
+                                Fallback
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-500 italic">
+                        Approver will be assigned based on your department and role hierarchy
+                      </p>
+                    )}
+                  </div>
+                </div>
+              );
+            })
+          )
         ) : (
           <p className="text-sm text-gray-500 italic">
             No approval levels defined for this leave duration.
