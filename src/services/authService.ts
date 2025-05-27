@@ -21,21 +21,21 @@ export interface RegisterResponse {
 }
 
 export const login = async (credentials: LoginCredentials): Promise<LoginResponse> => {
-  return post<LoginResponse>('/auth/login', credentials);
+  return post<LoginResponse>('/api/auth/login', credentials);
 };
 
 export const register = async (data: RegisterData): Promise<RegisterResponse> => {
-  return post<RegisterResponse>('/auth/register', data);
+  return post<RegisterResponse>('/api/auth/register', data);
 };
 
 export const getProfile = async (): Promise<ApiResponse<User>> => {
-  return get<ApiResponse<User>>('/auth/profile');
+  return get<ApiResponse<User>>('/api/auth/profile');
 };
 
 export const updateProfile = async (data: UpdateProfileData): Promise<ApiResponse<User>> => {
-  return put<ApiResponse<User>>('/auth/profile', data);
+  return put<ApiResponse<User>>('/api/auth/profile', data);
 };
 
 export const changePassword = async (data: ChangePasswordData): Promise<ApiResponse<void>> => {
-  return put<ApiResponse<void>>('/auth/change-password', data);
+  return put<ApiResponse<void>>('/api/auth/change-password', data);
 };

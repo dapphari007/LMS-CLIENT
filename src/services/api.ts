@@ -71,33 +71,111 @@ export const get = async <T>(
   }
 };
 
-// Generic POST request
+// Generic POST request with better error handling
 export const post = async <T>(
   url: string,
   data?: any,
   config?: AxiosRequestConfig
 ): Promise<T> => {
-  const response: AxiosResponse<T> = await api.post(url, data, config);
-  return response.data;
+  try {
+    const response: AxiosResponse<T> = await api.post(url, data, config);
+    return response.data;
+  } catch (error) {
+    console.error(`Error in POST request to ${url}:`, error);
+    if (error instanceof AxiosError && error.response) {
+      console.error(`Response status: ${error.response.status}`);
+      console.error(`Response data:`, error.response.data);
+      
+      // Add more detailed logging for debugging
+      if (error.response.status === 204) {
+        console.error("No content returned - server responded with 204 status code");
+        // For 204 responses, return an empty object as the expected type
+        return {} as T;
+      } else if (error.response.status === 401) {
+        console.error("Authentication error - credentials may be invalid");
+      } else if (error.response.status === 403) {
+        console.error("Permission error - user may not have access to this resource");
+      } else if (error.response.status === 404) {
+        console.error("Resource not found - endpoint may not exist or be misconfigured");
+      } else if (error.response.status >= 500) {
+        console.error("Server error - backend service may be down or experiencing issues");
+      }
+    } else if (error instanceof Error) {
+      console.error("Network or other error:", error.message);
+    }
+    throw error;
+  }
 };
 
-// Generic PUT request
+// Generic PUT request with better error handling
 export const put = async <T>(
   url: string,
   data?: any,
   config?: AxiosRequestConfig
 ): Promise<T> => {
-  const response: AxiosResponse<T> = await api.put(url, data, config);
-  return response.data;
+  try {
+    const response: AxiosResponse<T> = await api.put(url, data, config);
+    return response.data;
+  } catch (error) {
+    console.error(`Error in PUT request to ${url}:`, error);
+    if (error instanceof AxiosError && error.response) {
+      console.error(`Response status: ${error.response.status}`);
+      console.error(`Response data:`, error.response.data);
+      
+      // Add more detailed logging for debugging
+      if (error.response.status === 204) {
+        console.error("No content returned - server responded with 204 status code");
+        // For 204 responses, return an empty object as the expected type
+        return {} as T;
+      } else if (error.response.status === 401) {
+        console.error("Authentication error - token may be invalid or expired");
+      } else if (error.response.status === 403) {
+        console.error("Permission error - user may not have access to this resource");
+      } else if (error.response.status === 404) {
+        console.error("Resource not found - endpoint may not exist or be misconfigured");
+      } else if (error.response.status >= 500) {
+        console.error("Server error - backend service may be down or experiencing issues");
+      }
+    } else if (error instanceof Error) {
+      console.error("Network or other error:", error.message);
+    }
+    throw error;
+  }
 };
 
-// Generic DELETE request
+// Generic DELETE request with better error handling
 export const del = async <T>(
   url: string,
   config?: AxiosRequestConfig
 ): Promise<T> => {
-  const response: AxiosResponse<T> = await api.delete(url, config);
-  return response.data;
+  try {
+    const response: AxiosResponse<T> = await api.delete(url, config);
+    return response.data;
+  } catch (error) {
+    console.error(`Error in DELETE request to ${url}:`, error);
+    if (error instanceof AxiosError && error.response) {
+      console.error(`Response status: ${error.response.status}`);
+      console.error(`Response data:`, error.response.data);
+      
+      // Add more detailed logging for debugging
+      if (error.response.status === 204) {
+        console.error("No content returned - server responded with 204 status code");
+        // For 204 responses, return an empty object as the expected type
+        return {} as T;
+      } else if (error.response.status === 401) {
+        console.error("Authentication error - token may be invalid or expired");
+      } else if (error.response.status === 403) {
+        console.error("Permission error - user may not have access to this resource");
+      } else if (error.response.status === 404) {
+        console.error("Resource not found - endpoint may not exist or be misconfigured");
+      } else if (error.response.status >= 500) {
+        console.error("Server error - backend service may be down or experiencing issues");
+      }
+    } else if (error instanceof Error) {
+      console.error("Network or other error:", error.message);
+    }
+    throw error;
+  }
 };
 
 export default api;
