@@ -33,6 +33,24 @@ api.interceptors.response.use(
     return response;
   },
   (error: AxiosError) => {
+    // Log detailed error information
+    console.error("API Error:", {
+      message: error.message,
+      code: error.code,
+      status: error.response?.status,
+      data: error.response?.data,
+      url: error.config?.url,
+      method: error.config?.method,
+      baseURL: error.config?.baseURL,
+    });
+
+    // Handle network errors
+    if (error.code === 'ERR_NETWORK') {
+      console.error('Network error - server may be down or unreachable');
+      console.error('API URL:', config.apiUrl);
+      // You could implement a retry mechanism here
+    }
+
     // Handle 401 Unauthorized errors (token expired or invalid)
     if (error.response?.status === 401) {
       // Clear local storage and redirect to login
@@ -40,6 +58,7 @@ api.interceptors.response.use(
       localStorage.removeItem("user");
       window.location.href = "/login";
     }
+    
     return Promise.reject(error);
   }
 );
