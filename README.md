@@ -68,3 +68,28 @@ npm run build
 ## Backend Integration
 
 This frontend application is designed to work with the Leave Management System backend API. Make sure the backend server is running and accessible at the URL specified in the API configuration.
+
+## Deployment
+
+### Deploying to Vercel
+
+1. Create a Vercel account if you don't have one
+2. Install the Vercel CLI: `npm install -g vercel`
+3. Run `vercel` in the client directory to deploy
+4. Or connect your GitHub repository to Vercel for automatic deployments
+
+### Environment Variables
+
+When deploying to Vercel, set the following environment variables:
+
+- `VITE_API_URL`: The URL of your backend API (e.g., `https://your-app-name.up.railway.app/api`)
+
+### Connecting to Railway Backend
+
+To connect your Vercel frontend to your Railway backend:
+
+1. Deploy your backend to Railway
+2. Get your Railway app URL (e.g., `https://your-app-name.up.railway.app`)
+3. Set the `VITE_API_URL` environment variable in Vercel to `https://your-app-name.up.railway.app/api`
+4. Update the CORS configuration in your backend to allow requests from your Vercel domain
+5. Add your Vercel domain to the `ALLOWED_ORIGINS` environment variable in Railway
