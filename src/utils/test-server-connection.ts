@@ -24,10 +24,10 @@ export async function testServerConnection() {
   } catch (fetchError) {
     console.error('Fetch request failed:', fetchError);
     console.error('Error details:', {
-      name: fetchError.name,
-      message: fetchError.message,
-      code: fetchError.code,
-      stack: fetchError.stack
+      name: fetchError instanceof Error ? fetchError.name : 'Unknown',
+      message: fetchError instanceof Error ? fetchError.message : String(fetchError),
+      code: fetchError instanceof Error && 'code' in fetchError ? (fetchError as any).code : undefined,
+      stack: fetchError instanceof Error ? fetchError.stack : undefined
     });
   }
   
@@ -45,18 +45,19 @@ export async function testServerConnection() {
   } catch (error) {
     console.error('Server connection failed:', error);
     console.error('Error details:', {
-      name: error.name,
-      message: error.message,
-      code: error.code,
-      response: error.response ? {
-        status: error.response.status,
-        data: error.response.data
-      } : 'No response'
+      name: error instanceof Error ? error.name : 'Unknown',
+      message: error instanceof Error ? error.message : String(error),
+      code: error instanceof Error && 'code' in error ? (error as any).code : undefined,
+      response: error instanceof Error && 'response' in error ? 
+        (error as any).response ? {
+          status: (error as any).response.status,
+          data: (error as any).response.data
+        } : 'No response' : 'No response'
     });
     return {
       success: false,
       message: 'Failed to connect to server',
-      error
+      error: error instanceof Error ? error : new Error(String(error))
     };
   }
 }
@@ -96,10 +97,10 @@ export async function testAuthentication(email: string, password: string) {
   } catch (fetchError) {
     console.error('Fetch authentication request failed:', fetchError);
     console.error('Error details:', {
-      name: fetchError.name,
-      message: fetchError.message,
-      code: fetchError.code,
-      stack: fetchError.stack
+      name: fetchError instanceof Error ? fetchError.name : 'Unknown',
+      message: fetchError instanceof Error ? fetchError.message : String(fetchError),
+      code: fetchError instanceof Error && 'code' in fetchError ? (fetchError as any).code : undefined,
+      stack: fetchError instanceof Error ? fetchError.stack : undefined
     });
   }
   
@@ -116,18 +117,19 @@ export async function testAuthentication(email: string, password: string) {
   } catch (error) {
     console.error('Authentication failed:', error);
     console.error('Error details:', {
-      name: error.name,
-      message: error.message,
-      code: error.code,
-      response: error.response ? {
-        status: error.response.status,
-        data: error.response.data
-      } : 'No response'
+      name: error instanceof Error ? error.name : 'Unknown',
+      message: error instanceof Error ? error.message : String(error),
+      code: error instanceof Error && 'code' in error ? (error as any).code : undefined,
+      response: error instanceof Error && 'response' in error ? 
+        (error as any).response ? {
+          status: (error as any).response.status,
+          data: (error as any).response.data
+        } : 'No response' : 'No response'
     });
     return {
       success: false,
       message: 'Authentication failed',
-      error
+      error: error instanceof Error ? error : new Error(String(error))
     };
   }
 }
