@@ -9,6 +9,8 @@ const api = axios.create({
   },
   // Enable sending cookies with cross-origin requests
   withCredentials: true,
+  // Set timeout from configuration
+  timeout: config.apiTimeout,
 });
 
 // Add a request interceptor to add the auth token to every request
