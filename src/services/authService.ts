@@ -23,7 +23,13 @@ export interface RegisterResponse {
 export const login = async (credentials: LoginCredentials): Promise<LoginResponse> => {
   try {
     console.log('Attempting login with credentials:', { email: credentials.email, passwordLength: credentials.password?.length || 0 });
-    return post<LoginResponse>('/api/auth/login', credentials);
+    
+    // Use a longer timeout for login requests
+    const loginConfig = {
+      timeout: 60000, // 60 seconds
+    };
+    
+    return post<LoginResponse>('/api/auth/login', credentials, loginConfig);
   } catch (error) {
     console.error('Login error:', error);
     throw error;
