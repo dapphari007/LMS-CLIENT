@@ -35,7 +35,10 @@ export function debugConnection() {
   
   // Network test
   console.log('Running network test...');
-  fetch(config.apiUrl + '/health', { 
+  
+  // Test the root endpoint
+  console.log('Testing root endpoint...');
+  fetch(config.apiUrl + '/', { 
     method: 'GET',
     mode: 'cors',
     credentials: 'include',
@@ -44,20 +47,91 @@ export function debugConnection() {
     }
   })
     .then(response => {
-      console.log('Network test successful ✅');
+      console.log('Root endpoint test successful ✅');
       console.log('Status:', response.status);
       return response.text();
     })
     .then(text => {
       try {
         const data = JSON.parse(text);
-        console.log('Response data:', data);
+        console.log('Root endpoint response:', data);
       } catch (e) {
-        console.log('Response text:', text);
+        console.log('Root endpoint text:', text);
       }
     })
     .catch(error => {
-      console.error('Network test failed ❌', error);
+      console.error('Root endpoint test failed ❌', error);
+      console.error('Error details:', {
+        name: error.name,
+        message: error.message,
+        code: error.code,
+        stack: error.stack
+      });
+    });
+  
+  // Test the health endpoint
+  console.log('Testing health endpoint...');
+  fetch(config.apiUrl + '/api/health', { 
+    method: 'GET',
+    mode: 'cors',
+    credentials: 'include',
+    headers: {
+      'Accept': 'application/json'
+    }
+  })
+    .then(response => {
+      console.log('Health endpoint test successful ✅');
+      console.log('Status:', response.status);
+      return response.text();
+    })
+    .then(text => {
+      try {
+        const data = JSON.parse(text);
+        console.log('Health endpoint response:', data);
+      } catch (e) {
+        console.log('Health endpoint text:', text);
+      }
+    })
+    .catch(error => {
+      console.error('Health endpoint test failed ❌', error);
+      console.error('Error details:', {
+        name: error.name,
+        message: error.message,
+        code: error.code,
+        stack: error.stack
+      });
+    });
+    
+  // Test the login endpoint with a simple preflight request
+  console.log('Testing login endpoint preflight...');
+  fetch(config.apiUrl + '/api/auth/login', { 
+    method: 'OPTIONS',
+    mode: 'cors',
+    credentials: 'include',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  })
+    .then(response => {
+      console.log('Login endpoint preflight test successful ✅');
+      console.log('Status:', response.status);
+      console.log('Headers:', {
+        'access-control-allow-origin': response.headers.get('access-control-allow-origin'),
+        'access-control-allow-methods': response.headers.get('access-control-allow-methods'),
+        'access-control-allow-headers': response.headers.get('access-control-allow-headers'),
+        'access-control-allow-credentials': response.headers.get('access-control-allow-credentials')
+      });
+      return response;
+    })
+    .catch(error => {
+      console.error('Login endpoint preflight test failed ❌', error);
+      console.error('Error details:', {
+        name: error.name,
+        message: error.message,
+        code: error.code,
+        stack: error.stack
+      });
     });
   
   console.groupEnd();

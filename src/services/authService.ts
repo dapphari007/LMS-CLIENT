@@ -21,7 +21,13 @@ export interface RegisterResponse {
 }
 
 export const login = async (credentials: LoginCredentials): Promise<LoginResponse> => {
-  return post<LoginResponse>('/api/auth/login', credentials);
+  try {
+    console.log('Attempting login with credentials:', { email: credentials.email, passwordLength: credentials.password?.length || 0 });
+    return post<LoginResponse>('/api/auth/login', credentials);
+  } catch (error) {
+    console.error('Login error:', error);
+    throw error;
+  }
 };
 
 export const register = async (data: RegisterData): Promise<RegisterResponse> => {
